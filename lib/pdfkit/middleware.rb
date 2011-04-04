@@ -10,7 +10,6 @@ class PDFKit
     def call(env)
       @render_pdf = false
       set_request_to_render_as_pdf(env) if env['PATH_INFO'].match(/\.pdf$/)
-      
       status, headers, response = @app.call(env)
       
       request = Rack::Request.new(env)
@@ -25,10 +24,8 @@ class PDFKit
         # Do not cache PDFs
         headers.delete('ETag')
         headers.delete('Cache-Control')
-        
         headers["Content-Length"] = (body.respond_to?(:bytesize) ? body.bytesize : body.size).to_s
         headers["Content-Type"] = "application/pdf"
-        headers["X-Rack-Middleware-PDFKit"] = "true"
         response = [body]
       end
       
@@ -51,6 +48,7 @@ class PDFKit
         path = Pathname(env['PATH_INFO'])
         ['PATH_INFO','REQUEST_URI'].each { |e| env[e] = path.to_s.sub(/#{path.extname}$/,'')  } if path.extname == '.pdf'
         env['HTTP_ACCEPT'] = concat(env['HTTP_ACCEPT'], Rack::Mime.mime_type('.html'))
+        env["Rack-Middleware-PDFKit"] = "true"
       end
       
       def concat(accepts, type)
