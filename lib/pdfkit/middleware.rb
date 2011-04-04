@@ -28,7 +28,7 @@ class PDFKit
         
         headers["Content-Length"] = (body.respond_to?(:bytesize) ? body.bytesize : body.size).to_s
         headers["Content-Type"] = "application/pdf"
-        
+        headers["X-Rack-Middleware-PDFKit"] = "true"
         response = [body]
       end
       
