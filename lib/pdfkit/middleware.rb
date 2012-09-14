@@ -37,12 +37,12 @@ class PDFKit
       # Change relative paths to absolute
       def translate_paths(body, env)
         # Host with protocol
-        root = PDFKit.configuration.root_url || "#{env['rack.url_scheme']}://#{env['HTTP_HOST']}/"
-
+        root = env['rack.url_scheme'] + "://" + env['HTTP_HOST'] + "/"
+        
         memo = []
         body.each do |line|
           memo << line.gsub(/(href|src)=(['"])\/([^\"']*|[^"']*)['"]/, '\1=\2' + root + '\3\2')
-        end.join('')
+        end.join('')      
       end
     
       def set_request_to_render_as_pdf(env)
